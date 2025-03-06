@@ -11,7 +11,7 @@
             align-items: center;
             height: 100vh;
             margin: 0;
-            background-color: #f0f0f0;
+            background-color: #55f;
         }
         .game-container {
             display: flex;
@@ -96,7 +96,12 @@
                 <li><div class="color-box" style="background-color: #FFFF00;"></div>Speed-up Ball Brick</li>
                 <li><div class="color-box" style="background-color: #800080;"></div>Sticky Paddle Brick</li>
                 <li><div class="color-box" style="background-color: #00FFFF;"></div>Phase Through Brick</li>
-                <li><div class="color-box" style="background-color: #FFC0CB;"></div>Heart Item (+1 Life)</li>
+                <li>
+                    <svg width="20" height="20" viewBox="20 20 457 423" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M140 20C73 20 20 74 20 140c0 135 136 170 228 303 88-132 229-173 229-303 0-66-54-120-120-120-48 0-90 28-109 69-19-41-60-69-108-69z" fill="#FFC0CB" stroke="black"/>
+                    </svg>
+                    <div style="width:9pt"></div>Heart Item (+1 Life)
+                </li>
                 <li><div class="color-box" style="background-color: #90EE90;"></div>Widen Paddle Item</li>
                 <li><div class="color-box" style="background-color: #FFD700;"></div>Shrink Paddle Item</li>
                 <li><div class="color-box" style="background-color: #FFFFE0;"></div>Speed-up Ball Item</li>
@@ -191,6 +196,17 @@
                 this.stickyTimer = 0;
                 this.phaseThroughTimer = 0;
                 this.baseSpeedLevel1 = 7.5 + 0.75 * 1;
+                // Initialize heart SVG image
+                this.heartImage = new Image();
+                this.heartImage.onload = () => {
+                    this.heartImageLoaded = true;
+                };
+                this.heartImage.src = 'data:image/svg+xml,' + encodeURIComponent(
+                    '<svg width="20" height="20" viewBox="20 20 457 423" xmlns="http://www.w3.org/2000/svg">' +
+                    '<path d="M140 20C73 20 20 74 20 140c0 135 136 170 228 303 88-132 229-173 229-303 0-66-54-120-120-120-48 0-90 28-109 69-19-41-60-69-108-69z" fill="#FFC0CB" stroke="black"/>' +
+                    '</svg>'
+                );
+                this.heartImageLoaded = false;
             }
 
             init() {
@@ -539,10 +555,14 @@
                     }
                 }
                 this.items.forEach(item => {
-                    this.ctx.fillStyle = this.getItemColor(item.type);
-                    this.ctx.fillRect(item.x, item.y, 20, 20);
-                    this.ctx.strokeStyle = 'black';
-                    this.ctx.strokeRect(item.x, item.y, 20, 20);
+                    if (item.type === 2 && this.heartImageLoaded) {
+                        this.ctx.drawImage(this.heartImage, item.x, item.y, 20, 20);
+                    } else {
+                        this.ctx.fillStyle = this.getItemColor(item.type);
+                        this.ctx.fillRect(item.x, item.y, 20, 20);
+                        this.ctx.strokeStyle = 'black';
+                        this.ctx.strokeRect(item.x, item.y, 20, 20);
+                    }
                 });
                 if (this.gameOver) {
                     this.ctx.fillStyle = 'black';
